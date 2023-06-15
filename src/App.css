@@ -64,6 +64,18 @@ h6 {
   color: #000;
 }
 
+.player-R {
+  color: #f00;
+}
+
+.player-Y {
+  color: #cc0;
+}
+
+.player-B {
+  color: #000;
+}
+
 .board-row:after {
   clear: both;
   content: '';
