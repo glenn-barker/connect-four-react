@@ -97,5 +97,32 @@ h6 {
 }
 
 .game-info {
-  margin-left: 20px;
+  margin: 5px;
+  font-size: 31px;
+}
+
+.game-info button {
+  background-color: #48abe0;
+  color: white;
+  border: none;
+  padding: 5px;
+  margin: 5px;
+  font-size: 22px;
+  box-shadow: 0 2px 4px darkslategray;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 10%;
+}
+
+.game-info button:disabled {
+  background-color: lightgray;
+  color: gray;
+  box-shadow: 0 0 2px darkslategray;
+  transform: translateY(2px);
+}
+
+.game-info button:enabled:active {
+  background-color: #48abe0;
+  box-shadow: 0 0 2px darkslategray;
+  transform: translateY(2px);
 }

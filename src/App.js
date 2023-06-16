@@ -65,32 +65,62 @@ function Board({grid, onPlay}) {
  * @returns 
  */
 function App() {
-  const [grid, setGrid] = useState(generateEmptyGrid(7, 6));  // Default 7x6 empty board.
-  const [currentMove, setCurrentMove] = useState(0);          // Keep track of how many turns have passed.
-  const nextTurn = (currentMove % 2 === 0 ? 'R' : 'Y');       // Alternate red/yellow player every turn.
-
+  const [history, setHistory] = useState([generateEmptyGrid(7, 6)]);  // Default 7x6 empty board.  
+  const [currentMove, setCurrentMove] = useState(0);                  // Keep track of how many turns have passed.
+  const currentPlayer = (currentMove % 2 === 0 ? 'R' : 'Y');          // Alternate red/yellow player every turn.
+  
+  const grid = history[currentMove];
   const winner = calculateWinner(grid);
   const status = (winner ? 'Winner:' : 'Next player:');
-  const player = (winner ? <Player player={winner}/> : <Player player={nextTurn}/>);
+  const player = (winner ? <Player player={winner}/> : <Player player={currentPlayer}/>);
 
+  /**
+   * This method handles placing pieces & updating board state when a player clicks in the board.
+   * @param {*} columnIndex 
+   * @returns 
+   */
   function handlePlay(columnIndex) {
     // Given a column, determine where the next piece would land after being dropped.
     const rowIndex = getNextRowIndexInColumn(grid, columnIndex);
     if (rowIndex < 0 || winner) return;  // Don't overfill columns or play when the game is over.
     
     // Add the piece to the bottom of the chosen column.
-    const newGrid = grid.slice();
-    newGrid[rowIndex][columnIndex] = nextTurn;
+    const newGrid = grid.map(i => i.slice());  // Copy the entire 2D grid before modifying.
+    newGrid[rowIndex][columnIndex] = currentPlayer;
+
+    // Append the new board state to the game's history.
+    const newHistory = [...history.slice(0, currentMove + 1), newGrid];
 
     // Update state & re-render, updating the current move also swaps players.
-    setGrid(newGrid);
-    setCurrentMove(currentMove + 1);
+    setHistory(newHistory);
+    setCurrentMove(newHistory.length - 1);
+  }
+
+  /**
+   * This method handles updating board state to reflect history when a player clicks Undo or Redo.
+   * @param {*} direction 
+   */
+  function jumpToHistory(historyIndex) {
+    setCurrentMove(historyIndex);
+  }
+
+  /**
+   * This function resets all state data, effectively resetting the game.
+   */
+  function newGame() {
+    setHistory([history[0]]);
+    setCurrentMove(0);
   }
 
   return (
     <>
-      <div className='status'>{status} {player}</div>
       <Board grid={grid} onPlay={handlePlay}/>
+      <div className='game-info'>{status} {player}</div>
+      <div className='game-info'>
+        <button onClick={() => jumpToHistory(currentMove - 1)} disabled={currentMove === 0}>Undo</button>
+        <button onClick={() => jumpToHistory(currentMove + 1)} disabled={currentMove+1 >= history.length}>Redo</button>
+        <button onClick={newGame}>Restart</button>
+      </div>
     </>
   );
 }
