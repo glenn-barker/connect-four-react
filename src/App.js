@@ -27,7 +27,9 @@ function Player({player}) {
  */
 function Square({value, onSquareClick}) {
   return (
-    <button className={`square square-${value}`} onClick={onSquareClick}/>
+    <span className='square-parent' onClick={onSquareClick}>
+      <button className={`square square-${value}`} />
+    </span>
   );
 }
 
